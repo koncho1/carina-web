@@ -15,21 +15,14 @@
  *******************************************************************************/
 package com.zebrunner.carina.demo.gui.pages.common;
 
-import com.zebrunner.carina.demo.gui.components.CategoryMenu;
-import com.zebrunner.carina.demo.gui.components.ShopItem;
 import com.zebrunner.carina.demo.gui.pages.desktop.LoginPage;
 import com.zebrunner.carina.demo.gui.pages.desktop.ProductPage;
 import com.zebrunner.carina.demo.gui.pages.desktop.SearchPage;
 import com.zebrunner.carina.webdriver.decorator.PageOpeningStrategy;
 import org.openqa.selenium.WebDriver;
-
-import com.zebrunner.carina.webdriver.decorator.ExtendedWebElement;
 import com.zebrunner.carina.webdriver.gui.AbstractPage;
 
-import java.util.List;
-
 public abstract class HomePageBase extends AbstractPage {
-
 
     public abstract LoginPage getLoginPage();
 
@@ -45,7 +38,9 @@ public abstract class HomePageBase extends AbstractPage {
 
     public abstract ProductPage getProductPage();
 
-    public abstract void clickFirstItemInCurrencySelector();
+    public abstract void addItemsToCart(int numberOfItems);
+
+    public abstract void changeCurrency(String currency);
 
     public abstract boolean isCurrencyInCartCorrect(String currencySign);
 

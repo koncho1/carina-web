@@ -17,48 +17,56 @@ package com.zebrunner.carina.demo;
 
 import com.zebrunner.carina.demo.gui.pages.common.*;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.zebrunner.carina.core.IAbstractTest;
 
-public class HomePageTest implements IAbstractTest {
+public class HomePageTest extends BaseTests {
 
 
     //Tests if changing the currency changes the currency letter in cart
-    @Test
-    public void testCurrencyChange() {
-        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
-        homePage.open();
-        Assert.assertTrue(homePage.isPageOpened(), "Home page is not opened");
-        homePage.clickCurrencySelector();
-        homePage.clickFirstItemInCurrencySelector();
-        Assert.assertTrue(homePage.isCurrencyInCartCorrect("£"));
+    @Test(dataProvider = "currencyValuesProvider")
+    public void testCurrencyChange(String enteredCurrency, String expectedCurrency) {
+        HomePageBase homePage = super.startHomePage();
+        homePage.changeCurrency(enteredCurrency);
+        Assert.assertTrue(homePage.isCurrencyInCartCorrect(expectedCurrency));
     }
 
 
     //Tests the total price in cart after adding an item
     @Test
-    public void testCartTotal(){
-        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
-        homePage.open();
-        Assert.assertTrue(homePage.isPageOpened(), "Home page is not opened");
+    public void testCartTotal() {
+        HomePageBase homePage = startHomePage();
         homePage.clickAddToCartButton();
         Assert.assertTrue(homePage.isCartTotalCorrect("$29.50"));
     }
 
 
     //Checks if adding multiple items to cart changes the number of items in home page
-    @Test
-    public void testCartItemCount(){
-        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
-        homePage.open();
-        Assert.assertTrue(homePage.isPageOpened(), "Home page is not opened");
-        homePage.clickAddToCartButton();
-        homePage.clickAddToCartButton();
-        homePage.clickAddToCartButton();
-        Assert.assertTrue(homePage.isCartItemCountCorrect("3"));
+    @Test(dataProvider = "itemCountProvider")
+    public void testCartItemCount(int numberOfItemsToAdd, String expectedNumberInCart) {
+        HomePageBase homePage = startHomePage();
+        homePage.addItemsToCart(numberOfItemsToAdd);
+        Assert.assertTrue(homePage.isCartItemCountCorrect(expectedNumberInCart));
 
     }
 
+    @DataProvider(name = "currencyValuesProvider")
+    public static Object[][] currencyProvider() {
+        return new Object[][]{
+                {"£", "£"},
+                {"$", "$"},
+                {"€", "€"}
+        };
+    }
+
+    @DataProvider(name = "itemCountProvider")
+    public static Object[][] itemCountProvider() {
+        return new Object[][]{
+                {3, "3"},
+                {1, "1"},
+                {5, "5"}
+        };
+    }
 
 }

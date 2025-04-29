@@ -21,10 +21,10 @@ import java.util.Objects;
 
 import com.zebrunner.carina.demo.gui.components.CategoryMenu;
 import com.zebrunner.carina.demo.gui.components.ShopItem;
-import com.zebrunner.carina.demo.gui.pages.common.*;
+import com.zebrunner.carina.demo.gui.pages.common.HomePageBase;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.FindBys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +34,15 @@ import com.zebrunner.carina.webdriver.decorator.ExtendedWebElement;
 @DeviceType(pageType = DeviceType.Type.DESKTOP, parentClass = HomePageBase.class)
 public class HomePage extends HomePageBase {
 
+    private static final String POUND_SYMBOL = "£";
+
+    private static final String DOLLAR_SYMBOL = "$";
+
+    private static final String EURO_SYMBOL = "€";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @FindBy (xpath= "//ul[contains(@class, 'nav-pills categorymenu'")
+    @FindBy(xpath = "//ul[contains(@class, 'nav-pills categorymenu'")
     private CategoryMenu categoryMenu;
 
     @FindBy(xpath = "//div[contains(@class, 'thumbnails list-inline')]//div")
@@ -48,74 +54,91 @@ public class HomePage extends HomePageBase {
     @FindBy(xpath = "//ul[contains(@class, 'dropdown-menu currency')]")
     private List<ExtendedWebElement> currencyList;
 
-    @FindBy (xpath = "//i[contains(@class, 'fa fa-cart-plus fa-fw')]")
+    @FindBy(xpath = "//i[contains(@class, 'fa fa-cart-plus fa-fw')]")
     private ExtendedWebElement addToCartButton;
 
-    @FindBy (xpath = "//div[contains(@class, 'block_7')]//span[contains(@class , 'label label-orange font14')]")
+    @FindBy(xpath = "//div[contains(@class, 'block_7')]//span[contains(@class , 'label label-orange font14')]")
     private ExtendedWebElement cartItemCountLabel;
 
-    @FindBy (xpath = "//span[contains(@class, 'cart_total')]")
+    @FindBy(xpath = "//span[contains(@class, 'cart_total')]")
     private ExtendedWebElement cartTotalText;
 
     @FindBy(xpath = "//div[contains(@class, 'navbar-header header-logo')]")
     private ExtendedWebElement logo;
 
-    @FindBy (xpath="//a[text()='Login or register']")
+    @FindBy(xpath = "//a[text()='Login or register']")
     private ExtendedWebElement loginButton;
 
-    @FindBy (xpath = "//input[contains(@name, 'filter_keyword')]")
+    @FindBy(xpath = "//input[contains(@name, 'filter_keyword')]")
     private ExtendedWebElement searchField;
 
-    @FindBy (xpath = "//i[contains(@class, 'fa fa-search')]")
+    @FindBy(xpath = "//i[contains(@class, 'fa fa-search')]")
     private ExtendedWebElement searchButton;
 
-    public LoginPage getLoginPage(){
+    public LoginPage getLoginPage() {
         loginButton.click();
         return new LoginPage(driver);
     }
 
-    public SearchPage getSearchPage(String searchText){
+    public SearchPage getSearchPage(String searchText) {
         searchField.click();
         searchField.type(searchText);
         searchButton.click();
         return new SearchPage(driver);
     }
 
-    public void clickAddToCartButton(){
+    public void clickAddToCartButton() {
         addToCartButton.click();
     }
 
-    public boolean isCartItemCountCorrect(String correctItemCount){
+    public boolean isCartItemCountCorrect(String correctItemCount) {
         return Objects.equals(cartItemCountLabel.getText(), correctItemCount);
     }
 
-    public boolean isCartTotalCorrect(String correctCartTotal){
-        return Objects.equals(cartTotalText.getText(),correctCartTotal);
+    public boolean isCartTotalCorrect(String correctCartTotal) {
+        return Objects.equals(cartTotalText.getText(), correctCartTotal);
     }
 
-    public void clickCurrencySelector(){
+    public void clickCurrencySelector() {
         currencySelector.click();
     }
 
-    public void clickFirstItemInCurrencySelector(){
-        currencyList.get(0).click();
+    public void changeCurrency(String currency) {
+        clickCurrencySelector();
+
+        switch (currency) {
+            case POUND_SYMBOL:
+                currencyList.get(0).click();
+                break;
+            case EURO_SYMBOL:
+                currencyList.get(1).click();
+                break;
+            case DOLLAR_SYMBOL:
+                currencyList.get(2).click();
+                break;
+            default:
+                throw new NotFoundException("This currency is not supported!");
+        }
     }
 
-    public boolean isCurrencyInCartCorrect(String currencySign){
-       return cartTotalText.getText().contains(currencySign);
+    public boolean isCurrencyInCartCorrect(String currencySign) {
+        return cartTotalText.getText().contains(currencySign);
     }
 
-    public ProductPage getProductPage(){
-       return itemsList.get(0).getProductPage();
+    public ProductPage getProductPage() {
+        return itemsList.get(0).getProductPage();
+    }
+
+    public void addItemsToCart(int numberOfItems) {
+        for (int i = 0; i < numberOfItems; i++) {
+            clickAddToCartButton();
+        }
     }
 
     public HomePage(WebDriver driver) {
         super(driver);
         setUiLoadedMarker(logo);
     }
-
-
-
 
 
 }

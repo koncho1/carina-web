@@ -47,22 +47,34 @@ public class LoginPage extends LoginPageBase {
         forgotPasswordButton.click();
     }
 
-    public void enterLogin(String login){
+    private void enterLogin(String login){
         loginField.click();
         loginField.type(login);
     }
 
-    public void enterPassword(String password){
+    private void enterPassword(String password){
         passwordField.click();
         passwordField.type(password);
     }
 
-    public void enterEmail(String email){
+    private void enterEmail(String email){
         emailField.click();
         emailField.type(email);
     }
 
-    public void clickContinueButton(){
+    public void logIn(String login, String password){
+        enterLogin(login);
+        enterPassword(password);
+        clickLoginButton();
+    }
+
+    public void fillForgotPasswordForm(String email, String login){
+        enterLogin(login);
+        enterEmail(email);
+        clickContinueButton();
+    }
+
+    private void clickContinueButton(){
         continueButton.click();
     }
 
@@ -70,7 +82,7 @@ public class LoginPage extends LoginPageBase {
         return errorMessage.isPresent();
     }
 
-    public void clickLoginButton(){
+    private void clickLoginButton(){
         loginButton.click();
     }
 
